@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { EventPattern } from '@nestjs/microservices';
 import { plainToInstance } from 'class-transformer';
@@ -22,5 +22,11 @@ export class HistoryController {
   @Get()
   findAll() {
     return plainToInstance(UserHistory, this.historyService.findAll());
+  }
+
+  @Get(':id')
+  getHistoryByUserId(@Param('id', ParseUUIDPipe) id: string) {
+    const history = this.historyService.getHistoryByUserId(id);
+    return history;
   }
 }

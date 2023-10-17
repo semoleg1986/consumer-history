@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserHistory } from './entities/history.entity';
@@ -38,5 +38,20 @@ export class HistoryService {
   }
   async findAll() {
     return await this.userHistoryRepository.find();
+  }
+
+  async getHistoryByUserId(userId: string) {
+    return this.userHistoryRepository
+      .findOne({ where: { userId } })
+      .then((user) => {
+        if (!user) {
+          throw new NotFoundException('User history not found');
+        }
+        return user;
+      })
+      .catch((error) => {
+        console.error('Error while fetching user:', error.message);
+        throw error;
+      });
   }
 }
